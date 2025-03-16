@@ -9,10 +9,10 @@ SRC_DIR = os.path.join(BASE_DIR, 'src')  # Ruta al directorio src
 LOCALES_DIR = os.path.join(SRC_DIR, 'locales')  # Guardar locales en src/locales
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generar y gestionar archivos de locales para traducciones de Blog.")
+    parser = argparse.ArgumentParser(description="Generar y gestionar archivos de locales para traducciones de Domain Manager.")
     parser.add_argument("languages", nargs='+', help="Idiomas objetivo (por ejemplo, es en fr)")
     parser.add_argument("-t", "--translate", action="store_true", help="Traducir automáticamente las cadenas con la API de Google Translate")
-    parser.add_argument("-f", "--file", default=SRC_DIR, help="Archivo o directorio a buscar para cadenas __blog")
+    parser.add_argument("-f", "--file", default=SRC_DIR, help="Archivo o directorio a buscar para cadenas __domain")
 
     args = parser.parse_args()
 

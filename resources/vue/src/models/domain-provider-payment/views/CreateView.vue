@@ -31,8 +31,8 @@
 
 <script>
 
-	import { getPolicy } from '@models/domain-provider-payment'
-	import CreateForm from '@models/domain-provider-payment/forms/CreateForm.vue'
+	import { getPolicy } from '@domainModels/domain-provider-payment'
+	import CreateForm from '@domainModels/domain-provider-payment/forms/CreateForm.vue'
 
 	export default {
 

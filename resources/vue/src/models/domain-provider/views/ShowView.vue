@@ -42,9 +42,9 @@
 
 <script>
 
-	import { showModel } from '@models/domain-provider'
-	import ModelCard from '@models/domain-provider/widgets/ModelCard.vue'
-	import ModelProfile from '@models/domain-provider/widgets/ModelProfile.vue'
+	import { showModel } from '@domainModels/domain-provider'
+	import ModelCard from '@domainModels/domain-provider/widgets/ModelCard.vue'
+	import ModelProfile from '@domainModels/domain-provider/widgets/ModelProfile.vue'
 
 	export default {
 

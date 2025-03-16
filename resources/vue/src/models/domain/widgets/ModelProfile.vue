@@ -25,7 +25,7 @@
 
 <script>
 
-	import { showModel } from '@models/domain'
+	import { showModel } from '@domainModels/domain'
 	
 	export default {
 

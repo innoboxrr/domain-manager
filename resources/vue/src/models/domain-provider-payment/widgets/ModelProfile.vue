@@ -25,7 +25,7 @@
 
 <script>
 
-	import { showModel } from '@models/domain-provider-payment'
+	import { showModel } from '@domainModels/domain-provider-payment'
 	
 	export default {
 

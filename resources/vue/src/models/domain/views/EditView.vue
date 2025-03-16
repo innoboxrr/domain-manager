@@ -21,8 +21,8 @@
 
 <script>
 
-	import { getPolicy } from '@models/domain'
-	import EditForm from '@models/domain/forms/EditForm.vue'
+	import { getPolicy } from '@domainModels/domain'
+	import EditForm from '@domainModels/domain/forms/EditForm.vue'
 
 	export default {
 

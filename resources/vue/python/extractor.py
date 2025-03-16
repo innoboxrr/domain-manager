@@ -4,16 +4,16 @@ import re
 EXCLUDED_DIRS = {'docs', 'node_modules'}
 
 def extract_strings(file_path):
-    """Extrae cadenas que coincidan con __blog('') de un archivo."""
+    """Extrae cadenas que coincidan con __domain('') de un archivo."""
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
-    matches = re.findall(r"__blog\(['\"](.*?)['\"]\)", content)
+    matches = re.findall(r"__domain\(['\"](.*?)['\"]\)", content)
     if matches:
         print(f"[INFO] Cadenas encontradas en {file_path}: {matches}")
     return matches
 
 def extract_strings_from_directory(directory):
-    """Recorre un directorio y extrae todas las cadenas __blog('') de los archivos."""
+    """Recorre un directorio y extrae todas las cadenas __domain('') de los archivos."""
     strings = []
     print(f"[INFO] Analizando directorio: {directory}")
     for root, dirs, files in os.walk(directory):

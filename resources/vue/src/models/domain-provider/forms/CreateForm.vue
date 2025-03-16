@@ -15,7 +15,7 @@
 
 <script>
 
-    import { createModel } from '@models/domain-provider'
+    import { createModel } from '@domainModels/domain-provider'
     import JSValidator from 'innoboxrr-js-validator'
     import {
         TextInputComponent,

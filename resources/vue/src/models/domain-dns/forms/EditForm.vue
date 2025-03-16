@@ -15,7 +15,7 @@
 
 <script>
 
-    import { showModel, updateModel} from '@models/domain-dns'
+    import { showModel, updateModel} from '@domainModels/domain-dns'
     import JSValidator from 'innoboxrr-js-validator'
     import {
         TextInputComponent,

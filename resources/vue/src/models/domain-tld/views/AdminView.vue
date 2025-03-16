@@ -28,7 +28,7 @@
 
 <script>
 	
-	import DataTable from '@models/domain-tld/widgets/DataTable.vue'
+	import DataTable from '@domainModels/domain-tld/widgets/DataTable.vue'
 
 	export default {
 

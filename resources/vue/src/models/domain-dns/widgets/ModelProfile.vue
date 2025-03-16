@@ -25,7 +25,7 @@
 
 <script>
 
-	import { showModel } from '@models/domain-dns'
+	import { showModel } from '@domainModels/domain-dns'
 	
 	export default {
 

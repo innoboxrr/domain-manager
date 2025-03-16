@@ -30,8 +30,8 @@
 <script>
 	
 	import DataTable from 'innoboxrr-vue-datatable'
-	import FilterForm from '@models/domain-provider-payment/forms/FilterForm.vue'
-	import * as model from '@models/domain-provider-payment' 
+	import FilterForm from '@domainModels/domain-provider-payment/forms/FilterForm.vue'
+	import * as model from '@domainModels/domain-provider-payment' 
 
 	export default {
 

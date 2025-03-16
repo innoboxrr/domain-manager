@@ -43,7 +43,7 @@ python locale_generate.py es fr -t -f ./project_files
 Archivos JSON generados en la carpeta `locales/`:
 ```json
 {
-    "Welcome to the blog": "Bienvenido al blog",
+    "Welcome to the Domain Manager": "Bienvenido al administrador de dominio",
     "Learn Python easily": "Aprende Python fácilmente"
 }
 ```
