@@ -1,6 +1,5 @@
-import dynamicRouteImport from 'innoboxrr-vue-utils/src/router/route-import';
-
-const appRoutes = dynamicRouteImport(import.meta.globEager('../**/routes/index.js'));
+const modules = import.meta.glob('../**/routes/index.js', { eager: true });
+const appRoutes = Object.values(modules).flatMap(m => m.default || []);
 
 // Validar que las rutas dinámicas sean un arreglo
 if (!Array.isArray(appRoutes)) {
