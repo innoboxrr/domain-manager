@@ -6,16 +6,16 @@ export const useGlobalStore = defineStore('domain-global', {
         sidebarOpen: false,
         navigation: [
             { name: 'Inicio', route: { name: 'DomainManagerDashboard' }, icon: HomeIcon, current: true },
-            // { name: 'Comparar Dominios', route: { name: 'CompararDominios' }, icon: GlobeAltIcon, current: false },
-            //{ name: 'Gestionar DNS', route: { name: 'GestionarDNS' }, icon: ServerIcon, current: false },
-            //{ name: 'Renovaciones', route: { name: 'Renovaciones' }, icon: ClockIcon, current: false },
+            { name: 'Comparar Dominios', route: { name: 'DomainManagerBuy' }, icon: GlobeAltIcon, current: false },
+            { name: 'Gestionar DNS', route: { name: 'DomainManagerDns' }, icon: ServerIcon, current: false },
+            { name: 'Renovaciones', route: { name: 'DomainManagerRenewals' }, icon: ClockIcon, current: false },
             { name: 'Pagos & Suscripciones', route: { name: 'DomainManagerBillings' }, icon: CreditCardIcon, current: false },
-            //{ name: 'Configuración', route: { name: 'Configuracion' }, icon: Cog6ToothIcon, current: false },
+            { name: 'Configuración', route: { name: 'DomainManagerSettings' }, icon: Cog6ToothIcon, current: false },
         ],
         domainsList: [
-            //{ id: 1, name: 'example.com', route: { name: 'DomainDetail', params: { domain: 'example.com' } }, initial: 'E', current: true },
-            //{ id: 2, name: 'testdomain.net', route: { name: 'DomainDetail', params: { domain: 'testdomain.net' } }, initial: 'T', current: false },
-            //{ id: 3, name: 'mywebsite.org', route: { name: 'DomainDetail', params: { domain: 'mywebsite.org' } }, initial: 'M', current: false },
+            { id: 1, name: 'example.com', route: { name: 'DomainManagerDomainDetail', params: { domain: 'example.com' } }, initial: 'E', current: true },
+            { id: 2, name: 'testdomain.net', route: { name: 'DomainManagerDomainDetail', params: { domain: 'testdomain.net' } }, initial: 'T', current: false },
+            { id: 3, name: 'mywebsite.org', route: { name: 'DomainManagerDomainDetail', params: { domain: 'mywebsite.org' } }, initial: 'M', current: false },
         ],
         activityItems: [
             {
