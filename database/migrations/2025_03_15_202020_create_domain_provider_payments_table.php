@@ -15,7 +15,10 @@ return new class extends Migration
     {
         Schema::create('domain_provider_payments', function (Blueprint $table) {
             $table->id();
-            //EDIT//
+            $table->string('status');
+            $table->decimal('amount', 10, 2);
+            $table->foreignId('domain_provider_id')->constrained();
+            $table->foreignId('domain_payment_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
         });

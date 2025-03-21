@@ -15,7 +15,17 @@ return new class extends Migration
     {
         Schema::create('domain_contacts', function (Blueprint $table) {
             $table->id();
-            //EDIT//
+            $table->string('type');
+            $table->string('name');
+            $table->string('lastname');
+            $table->string('organization')->nullable();
+            $table->string('address');
+            $table->string('city');
+            $table->string('state');
+            $table->string('zip');
+            $table->string('country');
+            $table->string('phone');
+            $table->string('email');
             $table->timestamps();
             $table->softDeletes();
         });

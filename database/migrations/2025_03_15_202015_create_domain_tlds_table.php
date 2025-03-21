@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('domain_tlds', function (Blueprint $table) {
             $table->id();
-            //EDIT//
+            $table->string('name');
             $table->timestamps();
             $table->softDeletes();
         });

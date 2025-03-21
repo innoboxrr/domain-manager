@@ -13,9 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('domains', function (Blueprint $table) {
+        Schema::create('domain_payment_methods', function (Blueprint $table) {
             $table->id();
-            //EDIT//
+            $table->string('processor'); // Stripe, PayPal, etc.
+            $table->json('payload')->nullable(); // Processor-specific data
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('domains');
+        Schema::dropIfExists('domain_payment_methods');
     }
 };

@@ -15,7 +15,8 @@ return new class extends Migration
     {
         Schema::create('domain_providers', function (Blueprint $table) {
             $table->id();
-            //EDIT//
+            $table->string('name');
+            $table->json('payload')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

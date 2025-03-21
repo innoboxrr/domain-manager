@@ -15,7 +15,12 @@ return new class extends Migration
     {
         Schema::create('domain_payments', function (Blueprint $table) {
             $table->id();
-            //EDIT//
+            $table->string('processor'); // Stripe, PayPal, etc.
+            $table->string('transaction_id'); // ID from the processor
+            $table->decimal('amount', 10, 2);
+            $table->decimal('tax', 10, 2);
+            $table->foreignId('domain_renewal_id')->constrained();
+            $table->foreignId('domain_payment_method_id')->constrained();
             $table->timestamps();
             $table->softDeletes();
         });
