@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('country');
             $table->string('phone');
             $table->string('email');
+            $table->foreignId('domain_id')->constrained()->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
