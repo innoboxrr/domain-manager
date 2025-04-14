@@ -12,7 +12,7 @@
     "@headlessui/vue": "^1.7.23",
     "@heroicons/vue": "^2.2.0",
     "dayjs": "^1.11.13",
-    "innoboxrr-form-elements": "^2.4.11",
+    "innoboxrr-form-elements": "^3.0.4",
     "innoboxrr-http-request": "^1.1.0",
     "innoboxrr-js-libs": "^1.0.9",
     "innoboxrr-js-validator": "^1.1.0",
