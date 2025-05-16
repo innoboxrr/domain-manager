@@ -1,5 +1,9 @@
 <template>
-    <div v-if="dataLoaded">
+    <div v-if="dataLoaded"
+        class="flex flex-col"
+        :class="{'xl:pl-72': sidebarOpen}"
+        style="height: calc(100vh - 54px)">
+
         <!-- Mobile Sidebar -->
         <TransitionRoot as="template" :show="sidebarOpen">
             <Dialog class="relative z-50 xl:hidden" @close="sidebarOpen = false">
@@ -65,9 +69,10 @@
                 <sidebar-menu />
             </div>
         </div>
-        <div class="xl:pl-72">
+
+        <div class="xl:pl-72 overflow-y-auto">
             <SearchHeader @open-sidebar="sidebarOpen = true" />
-            <main class="lg:pr-96">
+            <main class="lg:pr-96 flex-1">
                 <router-view />
             </main>
             <activity-feed />
