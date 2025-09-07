@@ -1,6 +1,6 @@
 {
     "name": "innoboxrr-domain-manager",
-    "version": "1.0.154",
+    "version": "1.0.155",
     "description": "Paquete de Vue para trabajar de la mano con el paquete innoboxrr/domain-manager",
     "type": "module",
     "main": "src/index.js",
