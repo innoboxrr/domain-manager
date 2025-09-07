@@ -13,8 +13,10 @@ export default {
             document.title = newTitle; // Actualizar el título del documento
         };
 
-        // Registrar el método global
-        app.config.globalProperties.$setTitle = setTitle;
-        app.provide('$setTitle', setTitle);
+        if(!app.config?.globalProperties?.$setTitle) {
+            app.config.globalProperties.$setTitle = setTitle;
+            app.provide('$setTitle', setTitle);
+        }
+
     },
 };
