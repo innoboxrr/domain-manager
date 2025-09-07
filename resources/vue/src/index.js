@@ -1,5 +1,5 @@
-import domainRoutes from './src/routes';
-import { TranslatePlugin, TitlePlugin } from './src/plugins';
+import domainRoutes from './routes';
+import { TranslatePlugin, TitlePlugin } from './plugins';
 
 export const routes = domainRoutes;
 

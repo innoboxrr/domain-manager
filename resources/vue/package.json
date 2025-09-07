@@ -1,33 +1,39 @@
 {
-  "name": "innoboxrr-domain-manager",
-  "version": "1.0.148",
-  "description": "Paquete de Vue para trabajar de la mano con el paquete innoboxrr/domain-manager",
-  "main": "index.js",
-  "scripts": {
-    "locales": "python python/main.py es en fr -t"
-  },
-  "author": "Homero Raul Vargas Cruz",
-  "license": "MIT",
-  "dependencies": {
-    "@headlessui/vue": "^1.7.23",
-    "@heroicons/vue": "^2.2.0",
-    "dayjs": "^1.11.13",
-    "innoboxrr-form-elements": "^3.0.4",
-    "innoboxrr-http-request": "^1.1.0",
-    "innoboxrr-js-libs": "^1.0.9",
-    "innoboxrr-js-validator": "^1.1.0",
-    "innoboxrr-vue-datatable": "^1.3.3",
-    "innoboxrr-vue-utils": "^1.0.0"
-  },
-  "peerDependencies": {
-    "pinia": "^2.1.6 || ^3.0.0",
-    "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
-  },
-  "devDependencies": {
-    "pinia": "^3.0.0",
-    "vite": "^4.5.14",
-    "vue": "^3.3.0",
-    "vue-router": "^4.2.0"
-  }
+    "name": "innoboxrr-domain-manager",
+    "version": "1.0.148",
+    "description": "Paquete de Vue para trabajar de la mano con el paquete innoboxrr/domain-manager",
+    "type": "module",
+    "main": "src/index.js",
+    "module": "src/index.js",
+    "exports": {
+        ".": "./src/index.js"
+    },
+    "files": [
+        "src",
+        "index.js"
+    ],
+    "scripts": {
+        "locales": "python python/main.py es en fr -t"
+    },
+    "author": "Homero Raul Vargas Cruz",
+    "license": "MIT",
+    "dependencies": {
+        "@headlessui/vue": "^1.7.23",
+        "@heroicons/vue": "^2.2.0",
+        "dayjs": "^1.11.13",
+        "innoboxrr-form-elements": "^3.0.4",
+        "innoboxrr-http-request": "^1.1.0",
+        "innoboxrr-js-libs": "^1.0.9",
+        "innoboxrr-js-validator": "^1.1.0",
+        "innoboxrr-vue-datatable": "^1.3.3",
+        "innoboxrr-vue-utils": "^1.0.0"
+    },
+    "peerDependencies": {
+        "pinia": "^3.0.0",
+        "vue": "^3.5.0",
+        "vue-router": "^4.2.0"
+    },
+    "devDependencies": {
+        "vite": "^4.5.14"
+    }
 }
