@@ -17,12 +17,17 @@
     "innoboxrr-js-libs": "^1.0.9",
     "innoboxrr-js-validator": "^1.1.0",
     "innoboxrr-vue-datatable": "^1.3.3",
-    "innoboxrr-vue-utils": "^1.0.0",
-    "pinia": "^2.3.0",
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "innoboxrr-vue-utils": "^1.0.0"
+  },
+  "peerDependencies": {
+    "pinia": "^2.1.6 || ^3.0.0",
+    "vue": "^3.3.0",
+    "vue-router": "^4.2.0"
   },
   "devDependencies": {
-    "vite": "^4.0.0"
+    "pinia": "^3.0.0",
+    "vite": "^4.5.14",
+    "vue": "^3.3.0",
+    "vue-router": "^4.2.0"
   }
 }
