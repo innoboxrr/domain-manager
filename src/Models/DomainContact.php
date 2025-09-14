@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainContactMutators;
 
 class DomainContact extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,79 @@ class DomainContact extends Model
         DomainContactAssignment,
         DomainContactOperations,
         DomainContactMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'type',
+        'name',
+        'lastname',
+        'organization',
+        'address',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'phone',
+        'email',
+        'domain_id',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'type',
+        'name',
+        'lastname',
+        'organization',
+        'address',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'phone',
+        'email',
+        'domain_id',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'type',
+        'name',
+        'lastname',
+        'organization',
+        'address',
+        'city',
+        'state',
+        'zip',
+        'country',
+        'phone',
+        'email',
     ];
 
     protected $casts = [
-        //CASTS//
+        // sin json/bool
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'type',
+        'name',
+        'lastname',
+        'email',
+        'phone',
+        'country',
+        'domain_id',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'domain',
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        //
     ];
 
     /*
@@ -66,5 +105,4 @@ class DomainContact extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainContactFactory::new();
     }
     */
-
 }

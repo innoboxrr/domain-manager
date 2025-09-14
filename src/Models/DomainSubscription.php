@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainSubscriptionMutators;
 
 class DomainSubscription extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,82 @@ class DomainSubscription extends Model
         DomainSubscriptionAssignment,
         DomainSubscriptionOperations,
         DomainSubscriptionMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'status',
+        'renewal_cycle',
+        'renewal_unit',
+        'auto_renewal',
+        'start_date',
+        'end_date',
+        'cancel_at_end_date',
+        'domain_id',
+        'user_id',
+        'domain_payment_method_id',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'status',
+        'renewal_cycle',
+        'renewal_unit',
+        'auto_renewal',
+        'start_date',
+        'end_date',
+        'cancel_at_end_date',
+        'domain_id',
+        'user_id',
+        'domain_payment_method_id',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'status',
+        'renewal_cycle',
+        'renewal_unit',
+        'auto_renewal',
+        'start_date',
+        'end_date',
+        'cancel_at_end_date',
+        'domain_payment_method_id',
     ];
 
     protected $casts = [
-        //CASTS//
+        'renewal_unit' => 'integer',
+        'auto_renewal' => 'boolean',
+        'cancel_at_end_date' => 'boolean',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'status',
+        'renewal_cycle',
+        'renewal_unit',
+        'auto_renewal',
+        'start_date',
+        'end_date',
+        'cancel_at_end_date',
+        'domain_id',
+        'user_id',
+        'domain_payment_method_id',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'domain',
+        'user',
+        'paymentMethod',
+        'renewals',
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        'renewals',
     ];
 
     /*
@@ -66,5 +108,4 @@ class DomainSubscription extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainSubscriptionFactory::new();
     }
     */
-
 }

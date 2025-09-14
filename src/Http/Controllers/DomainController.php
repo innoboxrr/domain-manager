@@ -12,7 +12,10 @@ use Innoboxrr\DomainManager\Http\Requests\Domain\{
     DeleteRequest,
     RestoreRequest,
     ForceDeleteRequest,
-    ExportRequest
+    ExportRequest,
+    RegistarSyncOperationRequest,
+    RegistarUpsertRecordsRequest,
+    RegistrarPurchaseRequest
 };
 
 class DomainController extends Controller
@@ -68,6 +71,21 @@ class DomainController extends Controller
     }
 
     public function export(ExportRequest $request)
+    {
+        return $request->handle();   
+    }
+
+    public function registarSyncOperation(RegistarSyncOperationRequest $request)
+    {
+        return $request->handle();   
+    }
+
+    public function registarUpsertRecords(RegistarUpsertRecordsRequest $request)
+    {
+        return $request->handle();   
+    }
+
+    public function registrarPurchase(RegistrarPurchaseRequest $request)
     {
         return $request->handle();   
     }

@@ -31,3 +31,12 @@ Route::delete('force-delete', 'DomainController@forceDelete')
 
 Route::post('export', 'DomainController@export')
 	->name('export');
+
+Route::post('registar-sync-operation', 'DomainController@registarSyncOperation')
+	->name('registar.sync.operation');
+
+Route::post('registar-upsert-records', 'DomainController@registarUpsertRecords')
+	->name('registar.upsert.records');
+
+Route::post('registrar-purchase', 'DomainController@registrarPurchase')
+    ->name('registrar.purchase');

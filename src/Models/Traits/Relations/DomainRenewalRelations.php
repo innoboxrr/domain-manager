@@ -2,11 +2,18 @@
 
 namespace Innoboxrr\DomainManager\Models\Traits\Relations;
 
-//IMPORTS//
-// use \Znck\Eloquent\Traits\BelongsToThrough; // Docs: https://github.com/staudenmeir/belongs-to-through
-// use \Staudenmeir\EloquentHasManyDeep\HasRelationships; // Docs: https://github.com/staudenmeir/eloquent-has-many-deep
+use Innoboxrr\DomainManager\Models\DomainSubscription;
+use Innoboxrr\DomainManager\Models\DomainPayment;
 
 trait DomainRenewalRelations
 {
-//EDIT//
+    public function subscription()
+    {
+        return $this->belongsTo(DomainSubscription::class, 'domain_subscription_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(DomainPayment::class, 'domain_renewal_id');
+    }
 }

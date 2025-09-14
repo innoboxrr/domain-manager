@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainProviderMutators;
 
 class DomainProvider extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,57 @@ class DomainProvider extends Model
         DomainProviderAssignment,
         DomainProviderOperations,
         DomainProviderMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'name',
+        'driver',
+        'secrets',
+        'settings',
+        'payload',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'name',
+        'driver',
+        'secrets',
+        'settings',
+        'payload',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'name',
+        'secrets',
+        'settings',
+        'payload',
     ];
 
     protected $casts = [
-        //CASTS//
+        'payload' => 'array',
+        'secrets' => 'encrypted:array',
+        'settings' => 'array',
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'name',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'domains',
+        'providerPayments',
+        // 'metas' si tienes modelo Meta
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        'domains',
+        'providerPayments',
     ];
 
     /*
@@ -66,5 +83,4 @@ class DomainProvider extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainProviderFactory::new();
     }
     */
-
 }

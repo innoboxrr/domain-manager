@@ -31,3 +31,6 @@ Route::delete('force-delete', 'DomainProviderController@forceDelete')
 
 Route::post('export', 'DomainProviderController@export')
 	->name('export');
+
+Route::post('check-availability', 'DomainProviderController@checkAvailability')
+	->name('check.availability');

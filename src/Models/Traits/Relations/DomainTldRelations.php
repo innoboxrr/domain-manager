@@ -2,11 +2,20 @@
 
 namespace Innoboxrr\DomainManager\Models\Traits\Relations;
 
-//IMPORTS//
-// use \Znck\Eloquent\Traits\BelongsToThrough; // Docs: https://github.com/staudenmeir/belongs-to-through
-// use \Staudenmeir\EloquentHasManyDeep\HasRelationships; // Docs: https://github.com/staudenmeir/eloquent-has-many-deep
+use Innoboxrr\DomainManager\Models\Domain;
+use Innoboxrr\DomainManager\Models\DomainProvider;
 
 trait DomainTldRelations
 {
-//EDIT//
+    public function domains()
+    {
+        return $this->hasMany(Domain::class, 'domain_tld_id');
+    }
+
+    public function providers()
+    {
+        return $this->belongsToMany(DomainProvider::class, 'domain_provider_tld', 'domain_tld_id', 'domain_provider_id')
+            ->withPivot(['price', 'rules'])
+            ->withTimestamps();
+    }
 }

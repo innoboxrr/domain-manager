@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainProviderPaymentMutators
 
 class DomainProviderPayment extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,52 @@ class DomainProviderPayment extends Model
         DomainProviderPaymentAssignment,
         DomainProviderPaymentOperations,
         DomainProviderPaymentMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'status',
+        'amount',
+        'domain_provider_id',
+        'domain_payment_id',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'status',
+        'amount',
+        'domain_provider_id',
+        'domain_payment_id',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'status',
+        'amount',
     ];
 
     protected $casts = [
-        //CASTS//
+        'amount' => 'decimal:2',
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'status',
+        'amount',
+        'domain_provider_id',
+        'domain_payment_id',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'provider',
+        'domainPayment',
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        //
     ];
 
     /*
@@ -66,5 +78,4 @@ class DomainProviderPayment extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainProviderPaymentFactory::new();
     }
     */
-
 }

@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainDnsMutators;
 
 class DomainDns extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,61 @@ class DomainDns extends Model
         DomainDnsAssignment,
         DomainDnsOperations,
         DomainDnsMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'type',
+        'name',
+        'value',
+        'ttl',
+        'priority',
+        'domain_id',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'type',
+        'name',
+        'value',
+        'ttl',
+        'priority',
+        'domain_id',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'type',
+        'name',
+        'value',
+        'ttl',
+        'priority',
     ];
 
     protected $casts = [
-        //CASTS//
+        'ttl' => 'integer',
+        'priority' => 'integer',
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'type',
+        'name',
+        'value',
+        'ttl',
+        'priority',
+        'domain_id',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'domain',
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        //
     ];
 
     /*
@@ -66,5 +87,4 @@ class DomainDns extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainDnsFactory::new();
     }
     */
-
 }

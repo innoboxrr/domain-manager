@@ -2,7 +2,7 @@
 
 namespace Innoboxrr\DomainManager\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent.Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Innoboxrr\Traits\MetaOperations;
@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainPaymentMutators;
 
 class DomainPayment extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,62 @@ class DomainPayment extends Model
         DomainPaymentAssignment,
         DomainPaymentOperations,
         DomainPaymentMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'processor',
+        'transaction_id',
+        'amount',
+        'tax',
+        'domain_renewal_id',
+        'domain_payment_method_id',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'processor',
+        'transaction_id',
+        'amount',
+        'tax',
+        'domain_renewal_id',
+        'domain_payment_method_id',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'processor',
+        'transaction_id',
+        'amount',
+        'tax',
     ];
 
     protected $casts = [
-        //CASTS//
+        'amount' => 'decimal:2',
+        'tax' => 'decimal:2',
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'processor',
+        'transaction_id',
+        'amount',
+        'tax',
+        'domain_renewal_id',
+        'domain_payment_method_id',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'renewal',
+        'paymentMethod',
+        'providerPayments',
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        'providerPayments',
     ];
 
     /*
@@ -66,5 +88,4 @@ class DomainPayment extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainPaymentFactory::new();
     }
     */
-
 }

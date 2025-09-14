@@ -15,7 +15,6 @@ use Innoboxrr\DomainManager\Models\Traits\Mutators\DomainRenewalMutators;
 
 class DomainRenewal extends Model
 {
-
     use HasFactory,
         SoftDeletes,
         MetaOperations,
@@ -25,39 +24,60 @@ class DomainRenewal extends Model
         DomainRenewalAssignment,
         DomainRenewalOperations,
         DomainRenewalMutators;
-        
+
     protected $fillable = [
-        //FILLABLE//
+        'type',
+        'renewed_date',
+        'status',
+        'next_due_date',
+        'notes',
+        'domain_subscription_id',
     ];
 
     protected $creatable = [
-        //CREATABLE//
+        'type',
+        'renewed_date',
+        'status',
+        'next_due_date',
+        'notes',
+        'domain_subscription_id',
     ];
 
     protected $updatable = [
-        //UPDATABLE//
+        'type',
+        'status',
+        'next_due_date',
+        'notes',
     ];
 
     protected $casts = [
-        //CASTS//
+        'renewed_date' => 'datetime',
+        'next_due_date' => 'datetime',
     ];
 
     protected $protected_metas = [];
 
     protected $editable_metas = [
-        //EDITABLEMETAS//
+        // metas editables si aplican
     ];
 
     public static $export_cols = [
-        //EXPORTCOLS//
+        'id',
+        'type',
+        'status',
+        'renewed_date',
+        'next_due_date',
+        'domain_subscription_id',
+        'created_at',
     ];
 
     public static $loadable_relations = [
-        //LOADABLERELATIONS//
+        'subscription',
+        'payments',
     ];
 
     public static $loadable_counts = [
-        //LOADABLECOUNTS//
+        'payments',
     ];
 
     /*
@@ -66,5 +86,4 @@ class DomainRenewal extends Model
         return \Innoboxrr\DomainManager\Database\Factories\DomainRenewalFactory::new();
     }
     */
-
 }

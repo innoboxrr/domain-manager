@@ -3,15 +3,18 @@
 namespace Innoboxrr\DomainManager\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Innoboxrr\DomainManager\Procedures\Support\RegistrarManager;
 
 class AppServiceProvider extends ServiceProvider
 {
 
     public function register()
     {
-        
         $this->mergeConfigFrom(__DIR__ . '/../../config/domain-manager.php', 'domain-manager');
 
+        $this->app->singleton(RegistrarManager::class, function ($app) {
+            return new RegistrarManager($app);
+        });
     }
 
     public function boot()
