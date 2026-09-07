@@ -2,3 +2,15 @@
 /tests export-ignore
 /phpunit.xml.dist export-ignore
 /.gitattributes export-ignore
+# El repositorio es LF, tambien en un checkout de Windows.
+#
+# Sin esto, autocrlf convertia el arbol de trabajo a CRLF al clonar y cualquier
+# comparacion contra otra copia del paquete salia como si todos los archivos
+# hubieran cambiado, escondiendo las diferencias reales.
+* text=auto eol=lf
+
+# Binarios, sin tocar.
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
