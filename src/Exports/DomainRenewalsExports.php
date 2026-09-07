@@ -34,9 +34,11 @@ class DomainRenewalsExports implements FromView
     public function getQuery()
     {   
         $builder = new Builder();
-        // lazy() en vez de get(): un export recorre la tabla entera y
-        // hidratar todas las filas a la vez es lo que revienta la memoria.
-        return $builder->lazy(DomainRenewal::class, $this->data);
+        return $builder->get(
+            DomainRenewal::class,
+            $this->data,
+            config('domain-manager.search-options')
+        );
     }
 
 }

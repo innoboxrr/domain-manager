@@ -96,10 +96,14 @@ class DomainSubscription extends Model
         'user',
         'paymentMethod',
         'renewals',
+        'renewals.payments',
+        'renewals.payments.providerPayments',
+        'renewals.payments.providerPayments.provider',
     ];
 
     public static $loadable_counts = [
         'renewals',
+        'renewals.payments',
     ];
 
     /*

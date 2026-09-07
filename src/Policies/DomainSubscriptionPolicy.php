@@ -3,39 +3,49 @@
 namespace Innoboxrr\DomainManager\Policies;
 
 use App\Models\User;
-use Innoboxrr\DomainManager\Models\DomainSubscription;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Innoboxrr\DomainManager\Models\Domain;
+use Innoboxrr\DomainManager\Models\DomainSubscription;
+use Innoboxrr\DomainManager\Policies\Concerns\WorkspaceAware;
 
 class DomainSubscriptionPolicy
 {
     use HandlesAuthorization;
+    use WorkspaceAware;
+
+    /** @var string[] */
+    protected array $adminBypassAbilities = [
+        'index',
+        'viewAny',
+        'view',
+        'export',
+    ];
 
     public function before($user, $ability)
     {
-
-        $exceptAbilities = [];
-
-        if($user->isAdmin() && !in_array($ability, $exceptAbilities)){
-        
+        if ($user->isAdmin() && in_array($ability, $this->adminBypassAbilities, true)) {
             return true;
-            
         }
-
     }
 
     public function index(User $user)
     {
-        return false;
+        $domain = $this->resolveDomainFromRequest();
+        $workspaceId = $domain ? $this->workspaceIdFromDomain($domain) : $this->requestWorkspaceId();
+
+        return $this->canAccessWorkspace($user, $workspaceId);
     }
 
     public function viewAny(User $user)
     {
-        return false;
+        return $this->index($user);
     }
 
     public function view(User $user, DomainSubscription $domainSubscription)
     {
-        return false;
+        $workspaceId = $this->workspaceIdThrough($domainSubscription, ['domain']);
+
+        return $this->canAccessWorkspace($user, $workspaceId);
     }
 
     public function create(User $user)
@@ -45,7 +55,17 @@ class DomainSubscriptionPolicy
 
     public function update(User $user, DomainSubscription $domainSubscription)
     {
-        return false;
+        $workspaceId = $this->workspaceIdThrough($domainSubscription, ['domain']);
+
+        if (! $this->canAccessWorkspace($user, $workspaceId, ['owner'])) {
+            return false;
+        }
+
+        $domain = $domainSubscription->relationLoaded('domain')
+            ? $domainSubscription->getRelation('domain')
+            : $domainSubscription->domain()->with('provider')->first();
+
+        return $domain && $domain->status !== 'released';
     }
 
     public function delete(User $user, DomainSubscription $domainSubscription)
@@ -65,7 +85,25 @@ class DomainSubscriptionPolicy
 
     public function export(User $user)
     {
-        return false;
+        return $this->canAccessWorkspace($user, $this->requestWorkspaceId(), ['owner']);
     }
 
+    protected function resolveDomainFromRequest(): ?Domain
+    {
+        $domainId = request()->input('domain_id');
+
+        if (!$domainId && request()->route()) {
+            $route = request()->route();
+            if (is_object($route)) {
+                $domainId = $route->parameter('domain_id');
+            }
+        }
+
+        if (!$domainId) {
+            return null;
+        }
+
+        return Domain::with('provider')->find($domainId);
+    }
 }
+

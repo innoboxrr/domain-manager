@@ -33,4 +33,7 @@ Route::post('export', 'DomainProviderController@export')
 	->name('export');
 
 Route::post('check-availability', 'DomainProviderController@checkAvailability')
-	->name('check.availability');
+        ->name('check.availability');
+
+Route::post('test-connection', 'DomainProviderController@testConnection')
+        ->name('test.connection');

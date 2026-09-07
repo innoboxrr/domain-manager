@@ -52,7 +52,11 @@ class IndexRequest extends FormRequest
 
         $builder = new Builder();
 
-        $query = $builder->get(DomainPayment::class, $this->all());
+        $query = $builder->get(
+            DomainPayment::class,
+            $this->all(),
+            config('domain-manager.search-options')
+        );
 
         return DomainPaymentResource::collection($query);
 

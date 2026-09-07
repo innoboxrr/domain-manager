@@ -5,7 +5,7 @@ namespace Innoboxrr\DomainManager\Http\Requests\Domain;
 use Illuminate\Foundation\Http\FormRequest;
 use Innoboxrr\DomainManager\Models\Domain;
 
-class RegistarUpsertRecordsRequest extends FormRequest
+class RegistrarUpsertRecordsRequest extends FormRequest
 {
     public function authorize()
     {

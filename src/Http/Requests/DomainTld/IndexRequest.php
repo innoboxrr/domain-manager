@@ -52,7 +52,11 @@ class IndexRequest extends FormRequest
 
         $builder = new Builder();
 
-        $query = $builder->get(DomainTld::class, $this->all());
+        $query = $builder->get(
+            DomainTld::class,
+            $this->all(),
+            config('domain-manager.search-options')
+        );
 
         return DomainTldResource::collection($query);
 

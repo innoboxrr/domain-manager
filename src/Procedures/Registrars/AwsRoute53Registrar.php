@@ -399,6 +399,106 @@ class AwsRoute53Registrar implements Registrar
         }
     }
 
+    public function getDomain(string $domain): array
+    {
+        try {
+            $res = $this->r53d->getDomainDetail([
+                'DomainName' => strtolower($domain),
+            ]);
+
+            return [
+                'domain' => $domain,
+                'status' => $res->get('Status') ?? null,
+                'auto_renew' => (bool) ($res->get('AutoRenew') ?? false),
+                'expires_at' => $res->get('Expiry') ?? null,
+                'nameservers' => array_map(static fn ($ns) => (string) $ns['Name'], $res->get('Nameservers') ?? []),
+            ];
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('AWS getDomain error: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    public function listRecords(string $domain): array
+    {
+        try {
+            $zone = $this->ensureHostedZone($domain);
+            $zoneId = $zone['zone_id'];
+
+            $records = [];
+            $next = null;
+
+            do {
+                $params = ['HostedZoneId' => $zoneId];
+                if ($next) {
+                    $params['StartRecordName'] = $next['name'];
+                    $params['StartRecordType'] = $next['type'];
+                }
+
+                $res = $this->r53->listResourceRecordSets($params);
+
+                foreach ($res->get('ResourceRecordSets') ?? [] as $set) {
+                    $records[] = [
+                        'type' => (string) ($set['Type'] ?? ''),
+                        'name' => rtrim((string) ($set['Name'] ?? ''), '.'),
+                        'ttl' => isset($set['TTL']) ? (int) $set['TTL'] : null,
+                        'value' => $this->mapAwsRecordValue($set),
+                        'priority' => isset($set['ResourceRecords'][0]['Value']) && ($set['Type'] ?? '') === 'MX'
+                            ? ($set['ResourceRecords'][0]['Value'] ?? null)
+                            : null,
+                    ];
+                }
+
+                $next = null;
+                if ($res->get('IsTruncated')) {
+                    $next = [
+                        'name' => $res->get('NextRecordName'),
+                        'type' => $res->get('NextRecordType'),
+                    ];
+                }
+            } while ($next);
+
+            return $records;
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('AWS listRecords error: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    public function transferDomain(array $transfer): array
+    {
+        throw new \BadMethodCallException('Transfers are not supported by the AWS registrar implementation.');
+    }
+
+    public function releaseDomain(string $domain, array $payload = []): array
+    {
+        throw new \BadMethodCallException('Domain release is not supported by the AWS registrar implementation.');
+    }
+
+    /**
+     * Mapea un contacto genérico (tu formulario) al formato AWS.
+     * Requiere phone con +CC.NUMERO (p.ej. +52.5500000000).
+     */
+    protected function mapAwsRecordValue(array $set)
+    {
+        if (isset($set['AliasTarget'])) {
+            return [
+                'dnsName' => $set['AliasTarget']['DNSName'] ?? null,
+                'hostedZoneId' => $set['AliasTarget']['HostedZoneId'] ?? null,
+                'evaluateTargetHealth' => $set['AliasTarget']['EvaluateTargetHealth'] ?? false,
+            ];
+        }
+
+        $records = $set['ResourceRecords'] ?? [];
+        if (empty($records)) {
+            return null;
+        }
+
+        if (count($records) === 1) {
+            return $records[0]['Value'] ?? null;
+        }
+
+        return array_map(static fn ($record) => $record['Value'] ?? null, $records);
+    }
+
     /**
      * Mapea un contacto genérico (tu formulario) al formato AWS.
      * Requiere phone con +CC.NUMERO (p.ej. +52.5500000000).

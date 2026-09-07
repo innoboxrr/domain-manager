@@ -30,6 +30,12 @@ class Domain extends Model
         'status',
         'domain_tld_id',
         'domain_provider_id',
+        'provider_ref',
+        'provider_status',
+        'nameservers',
+        'privacy',
+        'auto_renew',
+        'expires_at',
     ];
 
     protected $creatable = [
@@ -37,6 +43,12 @@ class Domain extends Model
         'status',
         'domain_tld_id',
         'domain_provider_id',
+        'provider_ref',
+        'provider_status',
+        'nameservers',
+        'privacy',
+        'auto_renew',
+        'expires_at',
     ];
 
     protected $updatable = [
@@ -44,10 +56,19 @@ class Domain extends Model
         'status',
         'domain_tld_id',
         'domain_provider_id',
+        'provider_ref',
+        'provider_status',
+        'nameservers',
+        'privacy',
+        'auto_renew',
+        'expires_at',
     ];
 
     protected $casts = [
-        // no json/boolean extras en este esquema base
+        'nameservers' => 'array',
+        'privacy' => 'boolean',
+        'auto_renew' => 'boolean',
+        'expires_at' => 'datetime',
     ];
 
     protected $protected_metas = [];
@@ -71,11 +92,18 @@ class Domain extends Model
         'contacts',
         'dns',
         'subscription',
+        'subscription.paymentMethod',
+        'subscription.renewals',
+        'subscription.renewals.payments',
+        'subscription.renewals.payments.paymentMethod',
+        'subscription.renewals.payments.providerPayments',
+        'subscription.renewals.payments.providerPayments.provider',
     ];
 
     public static $loadable_counts = [
         'dns',
         'contacts',
+        'subscription.renewals',
     ];
 
     /*

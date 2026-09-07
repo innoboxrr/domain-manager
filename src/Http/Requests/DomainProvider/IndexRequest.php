@@ -5,7 +5,6 @@ namespace Innoboxrr\DomainManager\Http\Requests\DomainProvider;
 use Innoboxrr\DomainManager\Models\DomainProvider;
 use Innoboxrr\DomainManager\Http\Resources\Models\DomainProviderResource;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Innoboxrr\SearchSurge\Search\Builder;
 
 class IndexRequest extends FormRequest
@@ -52,7 +51,11 @@ class IndexRequest extends FormRequest
 
         $builder = new Builder();
 
-        $query = $builder->get(DomainProvider::class, $this->all());
+        $query = $builder->get(
+            DomainProvider::class,
+            $this->all(),
+            config('domain-manager.search-options')
+        );
 
         return DomainProviderResource::collection($query);
 

@@ -11,14 +11,9 @@ use Illuminate\Validation\Rule;
 class UpdateRequest extends FormRequest
 {
 
-    protected function prepareForValidation()
-    {
-        //
-    }
-
     public function authorize()
     {
-        
+
         $domainProvider = DomainProvider::findOrFail($this->domain_provider_id);
 
         return $this->user()->can('update', $domainProvider);
@@ -28,28 +23,42 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'domain_provider_id' => 'required|numeric'
+            'domain_provider_id' => ['required', 'integer', 'exists:domain_providers,id'],
+            'workspace_id' => ['sometimes', 'integer', 'exists:workspaces,id'],
+            'name' => ['sometimes', 'required', 'string', 'max:191'],
+            'driver' => ['sometimes', 'string', Rule::in(['namecheap', 'route53'])],
+            'secrets' => ['nullable', 'array'],
+            'settings' => ['nullable', 'array'],
+            'payload' => ['nullable', 'array'],
         ];
     }
 
-    public function messages()
+    public function withValidator($validator)
     {
-        return [
-            //
-        ];
-    }
+        $validator->after(function ($validator) {
+            $provider = DomainProvider::find($this->domain_provider_id);
 
-    public function attributes()
-    {
-        return [
-            //
-        ];
-    }
+            if (! $provider) {
+                return;
+            }
 
-    protected function passedValidation()
-    {
-        //
+            $driver = $this->input('driver', $provider->driver ?? '');
+            $secrets = $this->has('secrets') ? $this->input('secrets', []) : ($provider->secrets ?? []);
+
+            if ($driver === 'namecheap') {
+                foreach (['api_user', 'api_key', 'username', 'client_ip'] as $key) {
+                    if (empty($secrets[$key])) {
+                        $validator->errors()->add("secrets.{$key}", __('validation.required'));
+                    }
+                }
+            } elseif ($driver === 'route53') {
+                foreach (['access_key', 'secret_key'] as $key) {
+                    if (empty($secrets[$key])) {
+                        $validator->errors()->add("secrets.{$key}", __('validation.required'));
+                    }
+                }
+            }
+        });
     }
 
     public function handle()

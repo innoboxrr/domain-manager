@@ -13,9 +13,13 @@ use Innoboxrr\DomainManager\Http\Requests\Domain\{
     RestoreRequest,
     ForceDeleteRequest,
     ExportRequest,
-    RegistarSyncOperationRequest,
-    RegistarUpsertRecordsRequest,
-    RegistrarPurchaseRequest
+    RegistrarSyncOperationRequest,
+    RegistrarUpsertRecordsRequest,
+    RegistrarPurchaseRequest,
+    RegistrarRenewRequest,
+    RegistrarTransferRequest,
+    RegistrarReleaseRequest,
+    RegistrarSyncDnsRequest
 };
 
 class DomainController extends Controller
@@ -75,18 +79,38 @@ class DomainController extends Controller
         return $request->handle();   
     }
 
-    public function registarSyncOperation(RegistarSyncOperationRequest $request)
+    public function registrarSyncOperation(RegistrarSyncOperationRequest $request)
     {
         return $request->handle();   
     }
 
-    public function registarUpsertRecords(RegistarUpsertRecordsRequest $request)
+    public function registrarUpsertRecords(RegistrarUpsertRecordsRequest $request)
     {
         return $request->handle();   
     }
 
     public function registrarPurchase(RegistrarPurchaseRequest $request)
     {
-        return $request->handle();   
+        return $request->handle();
+    }
+
+    public function registrarRenew(RegistrarRenewRequest $request)
+    {
+        return $request->handle();
+    }
+
+    public function registrarTransfer(RegistrarTransferRequest $request)
+    {
+        return $request->handle();
+    }
+
+    public function registrarRelease(RegistrarReleaseRequest $request)
+    {
+        return $request->handle();
+    }
+
+    public function registrarSyncDns(RegistrarSyncDnsRequest $request)
+    {
+        return $request->handle();
     }
 }

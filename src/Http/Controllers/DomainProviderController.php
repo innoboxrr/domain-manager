@@ -13,7 +13,8 @@ use Innoboxrr\DomainManager\Http\Requests\DomainProvider\{
     RestoreRequest,
     ForceDeleteRequest,
     ExportRequest,
-    CheckAvailabilityRequest
+    CheckAvailabilityRequest,
+    TestConnectionRequest
 };
 
 class DomainProviderController extends Controller
@@ -75,6 +76,11 @@ class DomainProviderController extends Controller
 
     public function checkAvailability(CheckAvailabilityRequest $request)
     {
-        return $request->handle();   
+        return $request->handle();
+    }
+
+    public function testConnection(TestConnectionRequest $request)
+    {
+        return $request->handle();
     }
 }

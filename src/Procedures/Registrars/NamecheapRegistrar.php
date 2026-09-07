@@ -146,7 +146,28 @@ class NamecheapRegistrar implements Registrar
 
     public function setConfig(array $config): void
     {
-        $this->cfg = $config;
+        $defaults = [
+            'api_user' => config('services.namecheap.api_user'),
+            'api_key' => config('services.namecheap.api_key'),
+            'username' => config('services.namecheap.username'),
+            'client_ip' => config('services.namecheap.client_ip'),
+            'sandbox' => config('services.namecheap.sandbox', false),
+            'base_url' => config('services.namecheap.base_url', $this->endpoint),
+            'sandbox_base_url' => config('services.namecheap.sandbox_base_url', $this->sandboxEndpoint),
+            'default_currency' => config('services.namecheap.default_currency', 'USD'),
+        ];
+
+        $config = array_filter($config, static fn ($value) => $value !== null);
+
+        $this->cfg = array_merge($defaults, $config);
+
+        if (!empty($this->cfg['base_url'])) {
+            $this->endpoint = (string) $this->cfg['base_url'];
+        }
+
+        if (!empty($this->cfg['sandbox_base_url'])) {
+            $this->sandboxEndpoint = (string) $this->cfg['sandbox_base_url'];
+        }
     }
 
     public function checkAvailability(string $fqdn): array
@@ -165,18 +186,22 @@ class NamecheapRegistrar implements Registrar
         }
 
         $available = ((string)$r['Available'] === 'true');
-        $price = null;
+        $priceAttr = (string) ($r['PremiumRegistrationPrice']
+            ?? $r['RegistrationPrice']
+            ?? $r['Price']
+            ?? '');
+        $price = $priceAttr !== '' ? (float) $priceAttr : null;
 
-        // Opcional: obtener precio (si así lo configuras) usando users.getPricing
-        // Aquí lo dejamos en null por simplicidad; puedes enriquecerlo con otra llamada.
+        if ($price === null) {
+            $price = $this->fetchPricing($fqdn);
+        }
 
         return [
             'available' => $available,
             'price' => $price,
+            'currency' => $this->cfg['default_currency'] ?? 'USD',
             'suggestions' => [], // podrías llamar namecheap.domains.gettldlist y armar locales
-            'raw' => [
-                'errorcount' => (string)($xml->Errors['Count'] ?? '0'),
-            ],
+            'raw' => json_decode(json_encode($xml), true),
         ];
     }
 
@@ -221,17 +246,42 @@ class NamecheapRegistrar implements Registrar
             throw new \RuntimeException('Namecheap registerDomain error: ' . $err);
         }
 
-        // Namecheap suele ser síncrono: asumimos SUCCESS
-        return [
-            'operation_id' => null,
-            'status' => 'SUCCESS',
-        ];
+        return array_filter([
+            'operation_id' => (string) ($r['OrderID'] ?? ''),
+            'status' => ((string) $r['Registered'] === 'true') ? 'SUCCESS' : 'FAILED',
+            'domain' => (string) ($r['Domain'] ?? $domain),
+            'expires_at' => (string) ($r['Expires'] ?? ''),
+            'charged_amount' => isset($r['ChargedAmount']) ? (float) $r['ChargedAmount'] : null,
+        ], static fn ($value) => $value !== '' && $value !== null);
     }
 
     public function fetchOperation(string $operationId): array
     {
-        // Namecheap es, en general, síncrono para create/renew/dns.
-        return ['status' => 'SUCCESS'];
+        $this->assertCreds();
+
+        $operationId = trim($operationId);
+
+        if ($operationId === '') {
+            return ['status' => 'UNKNOWN'];
+        }
+
+        try {
+            $xml = $this->request($this->baseParams('namecheap.orders.getInfo') + [
+                'OrderID' => $operationId,
+            ]);
+        } catch (\Throwable $e) {
+            return [
+                'status' => 'UNKNOWN',
+                'raw' => ['error' => $e->getMessage()],
+            ];
+        }
+
+        $result = $xml->CommandResponse->OrderGetInfoResult ?? null;
+
+        return [
+            'status' => strtoupper((string) ($result['Status'] ?? 'UNKNOWN')),
+            'raw' => json_decode(json_encode($result), true),
+        ];
     }
 
     public function ensureHostedZone(string $domain): array
@@ -246,6 +296,13 @@ class NamecheapRegistrar implements Registrar
             'DomainName' => $domain,
         ]);
 
+        $result = $xml->CommandResponse->DomainDNSSetDefaultResult ?? null;
+
+        if ($result && (string) ($result['IsSuccess'] ?? 'true') !== 'true') {
+            $err = $this->firstError($xml) ?: 'Namecheap no pudo asignar BasicDNS.';
+            throw new \RuntimeException($err);
+        }
+
         // Opcional: podrías llamar getList para saber los NS, pero no es necesario para setHosts.
         return ['zone_id' => null, 'ns' => []];
     }
@@ -256,21 +313,7 @@ class NamecheapRegistrar implements Registrar
 
         $domain = strtolower($zoneIdOrDomain);
 
-        // 1) obtener hosts actuales
-        $current = $this->request($this->baseParams('namecheap.domains.dns.getHosts') + [
-            'DomainName' => $domain,
-        ]);
-
-        $hosts = [];
-        foreach ($current->CommandResponse->DomainDNSGetHostsResult->host ?? [] as $h) {
-            $hosts[] = [
-                'HostName' => (string)$h['Name'],
-                'RecordType' => (string)$h['Type'],
-                'Address' => (string)$h['Address'],
-                'TTL' => (string)$h['TTL'],
-                'MXPref' => (string)($h['MXPref'] ?? ''),
-            ];
-        }
+        $hosts = $this->fetchHosts($domain);
 
         // 2) fusionar/upsert con $records
         foreach ($records as $rec) {
@@ -361,12 +404,157 @@ class NamecheapRegistrar implements Registrar
             throw new \RuntimeException('Namecheap renew error: ' . $err);
         }
 
-        return ['status' => 'SUCCESS'];
+        return array_filter([
+            'operation_id' => (string) ($r['OrderID'] ?? ''),
+            'status' => 'SUCCESS',
+            'expires_at' => (string) ($r['Expires'] ?? ''),
+        ], static fn ($value) => $value !== '' && $value !== null);
+    }
+
+    public function getDomain(string $domain): array
+    {
+        $this->assertCreds();
+
+        $xml = $this->request($this->baseParams('namecheap.domains.getInfo') + [
+            'DomainName' => strtolower($domain),
+        ]);
+
+        $info = $xml->CommandResponse->DomainGetInfoResult ?? null;
+
+        return [
+            'domain' => strtolower($domain),
+            'status' => (string)($info['Status'] ?? ''),
+            'auto_renew' => ((string)($info['AutoRenew'] ?? 'false')) === 'true',
+            'expires_at' => (string)($info['Expires'] ?? ''),
+            'nameservers' => array_map(
+                static fn ($ns) => (string) $ns,
+                iterator_to_array($info->Nameservers->Nameserver ?? [])
+            ),
+            'raw' => json_decode(json_encode($info), true),
+        ];
+    }
+
+    public function listRecords(string $domain): array
+    {
+        $domain = strtolower($domain);
+        $hosts = $this->fetchHosts($domain);
+
+        return array_map(fn ($host) => [
+            'type' => $host['RecordType'],
+            'name' => $this->fqdnFromHost($host['HostName'], $domain),
+            'ttl' => (int) $host['TTL'],
+            'value' => $host['Address'],
+            'priority' => $host['RecordType'] === 'MX' ? ($host['MXPref'] ?: null) : null,
+        ], $hosts);
+    }
+
+    public function transferDomain(array $transfer): array
+    {
+        $this->assertCreds();
+
+        $domain = strtolower($transfer['domain'] ?? '');
+        $authCode = $transfer['auth_code'] ?? $transfer['epp_code'] ?? null;
+
+        if ($domain === '' || empty($authCode)) {
+            throw new \InvalidArgumentException('Transferir un dominio requiere dominio y auth-code.');
+        }
+
+        $years = max(1, (int) ($transfer['years'] ?? 1));
+
+        $params = $this->baseParams('namecheap.domains.transfer.create') + [
+            'DomainName' => $domain,
+            'Years' => $years,
+            'EPPCode' => $authCode,
+        ];
+
+        $xml = $this->request($params);
+        $result = $xml->CommandResponse->DomainTransferCreateResult ?? null;
+
+        if (!$result) {
+            $err = $this->firstError($xml) ?: 'No se pudo iniciar la transferencia.';
+            throw new \RuntimeException('Namecheap transfer error: ' . $err);
+        }
+
+        return [
+            'operation_id' => (string) ($result['TransferID'] ?? ''),
+            'status' => strtoupper((string) ($result['TransferStatus'] ?? 'PENDING')),
+        ];
+    }
+
+    public function releaseDomain(string $domain, array $payload = []): array
+    {
+        throw new \BadMethodCallException('Domain release is not implemented for the Namecheap registrar driver.');
     }
 
     /* ============================
      * Helpers
      * ============================ */
+
+    protected function fetchPricing(string $domain): ?float
+    {
+        $tld = $this->extractTld($domain);
+
+        if ($tld === null) {
+            return null;
+        }
+
+        try {
+            $xml = $this->request($this->baseParams('namecheap.users.getPricing') + [
+                'ProductType' => 'DOMAIN',
+                'ProductCategory' => 'DOMAINS',
+                'ActionName' => 'REGISTER',
+                'ProductName' => $tld,
+            ]);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        foreach ($xml->CommandResponse->UserGetPricingResult->ProductType ?? [] as $type) {
+            foreach ($type->ProductCategory ?? [] as $category) {
+                foreach ($category->Product ?? [] as $product) {
+                    if (strcasecmp((string) ($product['Name'] ?? ''), $tld) !== 0) {
+                        continue;
+                    }
+
+                    $price = (string) ($product->Price['Register'] ?? '');
+
+                    if ($price !== '') {
+                        return (float) $price;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected function extractTld(string $domain): ?string
+    {
+        $domain = strtolower(trim($domain));
+
+        if ($domain === '' || !str_contains($domain, '.')) {
+            return null;
+        }
+
+        $parts = explode('.', $domain);
+
+        if (count($parts) < 2) {
+            return null;
+        }
+
+        $last = array_pop($parts);
+        $secondLast = array_pop($parts);
+
+        $knownSecondLevel = [
+            'co', 'com', 'org', 'net', 'gov', 'edu'
+        ];
+
+        if (in_array($secondLast, $knownSecondLevel, true) && !empty($parts)) {
+            return $secondLast . '.' . $last;
+        }
+
+        return $last;
+    }
 
     protected function baseParams(string $command): array
     {
@@ -438,6 +626,39 @@ class NamecheapRegistrar implements Registrar
 
         // Si no matchea, devolver tal cual (Namecheap lo aceptará como host)
         return $fqdn;
+    }
+
+    protected function fetchHosts(string $domain): array
+    {
+        $xml = $this->request($this->baseParams('namecheap.domains.dns.getHosts') + [
+            'DomainName' => $domain,
+        ]);
+
+        $hosts = [];
+        foreach ($xml->CommandResponse->DomainDNSGetHostsResult->host ?? [] as $h) {
+            $hosts[] = [
+                'HostName' => (string) $h['Name'],
+                'RecordType' => (string) $h['Type'],
+                'Address' => (string) $h['Address'],
+                'TTL' => (string) $h['TTL'],
+                'MXPref' => (string) ($h['MXPref'] ?? ''),
+            ];
+        }
+
+        return $hosts;
+    }
+
+    protected function fqdnFromHost(string $host, string $root): string
+    {
+        if ($host === '@') {
+            return $root;
+        }
+
+        if ($host === '') {
+            return $root;
+        }
+
+        return $host . '.' . $root;
     }
 
     protected function assertCreds(): void

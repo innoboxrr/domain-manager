@@ -26,6 +26,7 @@ class DomainProvider extends Model
         DomainProviderMutators;
 
     protected $fillable = [
+        'workspace_id',
         'name',
         'driver',
         'secrets',
@@ -34,6 +35,7 @@ class DomainProvider extends Model
     ];
 
     protected $creatable = [
+        'workspace_id',
         'name',
         'driver',
         'secrets',
@@ -42,13 +44,16 @@ class DomainProvider extends Model
     ];
 
     protected $updatable = [
+        'workspace_id',
         'name',
+        'driver',
         'secrets',
         'settings',
         'payload',
     ];
 
     protected $casts = [
+        'workspace_id' => 'integer',
         'payload' => 'array',
         'secrets' => 'encrypted:array',
         'settings' => 'array',

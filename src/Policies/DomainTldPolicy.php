@@ -3,49 +3,38 @@
 namespace Innoboxrr\DomainManager\Policies;
 
 use App\Models\User;
-use Innoboxrr\DomainManager\Models\DomainTld;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Innoboxrr\DomainManager\Models\DomainTld;
+use Innoboxrr\DomainManager\Policies\Concerns\WorkspaceAware;
 
 class DomainTldPolicy
 {
     use HandlesAuthorization;
-
-    public function before($user, $ability)
-    {
-
-        $exceptAbilities = [];
-
-        if($user->isAdmin() && !in_array($ability, $exceptAbilities)){
-        
-            return true;
-            
-        }
-
-    }
+    use WorkspaceAware;
 
     public function index(User $user)
     {
-        return false;
+        return $this->canAccessWorkspace($user, $this->requestWorkspaceId(), ['owner', 'member']);
     }
 
     public function viewAny(User $user)
     {
-        return false;
+        return $this->index($user);
     }
 
     public function view(User $user, DomainTld $domainTld)
     {
-        return false;
+        return $this->canAccessWorkspace($user, $this->requestWorkspaceId(), ['owner', 'member']);
     }
 
     public function create(User $user)
     {
-        return false;
+        return $user->isAdmin();
     }
 
     public function update(User $user, DomainTld $domainTld)
     {
-        return false;
+        return $user->isAdmin();
     }
 
     public function delete(User $user, DomainTld $domainTld)
@@ -65,7 +54,7 @@ class DomainTldPolicy
 
     public function export(User $user)
     {
-        return false;
+        return $user->isAdmin();
     }
-
 }
+

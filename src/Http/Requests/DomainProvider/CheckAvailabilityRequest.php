@@ -9,7 +9,13 @@ class CheckAvailabilityRequest extends FormRequest
 {
     public function authorize()
     {
-        return $this->user() !== null;
+        if (! $this->user()) {
+            return false;
+        }
+
+        $provider = DomainProvider::find($this->provider_id);
+
+        return $provider ? $this->user()->can('view', $provider) : false;
     }
 
     public function rules()

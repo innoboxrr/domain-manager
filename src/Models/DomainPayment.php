@@ -74,8 +74,11 @@ class DomainPayment extends Model
 
     public static $loadable_relations = [
         'renewal',
+        'renewal.subscription',
+        'renewal.subscription.domain',
         'paymentMethod',
         'providerPayments',
+        'providerPayments.provider',
     ];
 
     public static $loadable_counts = [

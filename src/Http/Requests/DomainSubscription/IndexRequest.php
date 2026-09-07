@@ -52,7 +52,11 @@ class IndexRequest extends FormRequest
 
         $builder = new Builder();
 
-        $query = $builder->get(DomainSubscription::class, $this->all());
+        $query = $builder->get(
+            DomainSubscription::class,
+            $this->all(),
+            config('domain-manager.search-options')
+        );
 
         return DomainSubscriptionResource::collection($query);
 

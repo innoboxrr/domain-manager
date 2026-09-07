@@ -5,7 +5,7 @@ namespace Innoboxrr\DomainManager\Http\Requests\Domain;
 use Illuminate\Foundation\Http\FormRequest;
 use Innoboxrr\DomainManager\Models\Domain;
 
-class RegistarSyncOperationRequest extends FormRequest
+class RegistrarSyncDnsRequest extends FormRequest
 {
     public function authorize()
     {
@@ -16,6 +16,7 @@ class RegistarSyncOperationRequest extends FormRequest
     {
         return [
             'domain_id' => 'required|numeric|exists:domains,id',
+            'persist' => 'nullable|boolean',
         ];
     }
 
@@ -23,8 +24,11 @@ class RegistarSyncOperationRequest extends FormRequest
     {
         $domain = Domain::findOrFail($this->domain_id);
 
-        $res = $domain->syncOperation();
+        $records = $domain->fetchRemoteDns((bool) $this->input('persist', false));
 
-        return response()->json($res);
+        return response()->json([
+            'domain_id' => $domain->id,
+            'records' => $records,
+        ]);
     }
 }

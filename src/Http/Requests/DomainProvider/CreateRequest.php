@@ -11,11 +11,6 @@ use Illuminate\Validation\Rule;
 class CreateRequest extends FormRequest
 {
 
-    protected function prepareForValidation()
-    {
-        //
-    }
-
     public function authorize()
     {
 
@@ -26,27 +21,35 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'workspace_id' => ['required', 'integer', 'exists:workspaces,id'],
+            'name' => ['required', 'string', 'max:191'],
+            'driver' => ['required', 'string', Rule::in(['namecheap', 'route53'])],
+            'secrets' => ['required', 'array'],
+            'settings' => ['nullable', 'array'],
+            'payload' => ['nullable', 'array'],
         ];
     }
 
-    public function messages()
+    public function withValidator($validator)
     {
-        return [
-            //
-        ];
-    }
+        $validator->after(function ($validator) {
+            $driver = $this->input('driver');
+            $secrets = $this->input('secrets', []);
 
-    public function attributes()
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function passedValidation()
-    {
-        //
+            if ($driver === 'namecheap') {
+                foreach (['api_user', 'api_key', 'username', 'client_ip'] as $key) {
+                    if (empty($secrets[$key])) {
+                        $validator->errors()->add("secrets.{$key}", __('validation.required'));
+                    }
+                }
+            } elseif ($driver === 'route53') {
+                foreach (['access_key', 'secret_key'] as $key) {
+                    if (empty($secrets[$key])) {
+                        $validator->errors()->add("secrets.{$key}", __('validation.required'));
+                    }
+                }
+            }
+        });
     }
 
     public function handle()

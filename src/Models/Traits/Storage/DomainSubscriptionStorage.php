@@ -53,9 +53,8 @@ trait DomainSubscriptionStorage
     public function forceDeleteModel()
     {
 
-        abort(403);
+        abort(403, 'Force delete is not allowed');
 
-        $this->forceDelete();
         
     }
 
