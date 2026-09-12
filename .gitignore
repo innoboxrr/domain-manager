@@ -9,3 +9,5 @@
 /resources/vue/package-lock.json
 /resources/vue/.env
 /resources/vue/python/env/*
+/composer.lock
+/.phpunit.result.cache

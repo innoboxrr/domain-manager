@@ -17,8 +17,9 @@
     ],
     "minimum-stability": "stable",
     "require-dev": {
-        "orchestra/testbench": "^9",
-        "innoboxrr/larapack-generator": "^5.0"
+        "orchestra/testbench": "^11.0",
+        "innoboxrr/larapack-generator": "^7.0",
+        "phpunit/phpunit": "^11.5 || ^12.0"
     },
     "extra": {
         "laravel": {
@@ -34,5 +35,13 @@
         "psr-4": {
             "Innoboxrr\\DomainManager\\Tests\\": "tests/"
         }
-    }
+    },
+    "require": {
+        "php": "^8.3",
+        "illuminate/support": "^13.0"
+    },
+    "suggest": {
+        "maatwebsite/excel": "Necesario para las exportaciones del paquete (^3.1)."
+    },
+    "description": "Gestion de dominios en Laravel: proveedores (AWS, Namecheap), TLD, DNS, contactos, suscripciones, renovaciones y pagos."
 }
